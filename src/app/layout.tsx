@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import BootstrapClient from "../../utils/BootstrapClient";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import StoreProvider from "./storeProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,8 +22,10 @@ export default function RootLayout({
         <ClerkProvider>
             <html lang="en">
                 <body className={inter.className}>
-                    {children}
-                    <BootstrapClient />
+                    <StoreProvider>
+                        {children}
+                        <BootstrapClient />
+                    </StoreProvider>
                 </body>
             </html>
         </ClerkProvider>
