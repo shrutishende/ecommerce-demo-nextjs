@@ -1,35 +1,33 @@
 "use client";
-
 import { Box, Button, Typography } from "@mui/material";
-import Image from "next/image";
-import React, {  useState } from "react";
+import React, { useEffect, useState } from "react";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Cart from "./Cart";
-import { useAppSelector } from "../../lib/hooks";
 import { RootState } from "../../lib/store";
 import Badge from "@mui/material/Badge";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SearchIcon from "@mui/icons-material/Search";
-import {
-    SignedOut,
-    SignInButton,
-    SignedIn,
-    UserButton,
-    SignIn,
-} from "@clerk/nextjs";
+import { SignedOut, SignedIn, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import { useAppSelector } from "../../lib/hooks";
+import { useDispatch } from "react-redux";
+import { initializeCart } from "../../lib/features/cartSlice";
 
 export default function Navbar() {
     const [viewCart, setViewCart] = useState(false);
+    
     const count = useAppSelector((state: RootState) => state.cart.items);
 
     let totalQuantity = 0;
     count.forEach((item) => {
         totalQuantity += item.quantity;
     });
-    
-
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(initializeCart());
+    }, [dispatch]);
    
+
     return (
         <Box
             sx={{
@@ -40,7 +38,6 @@ export default function Navbar() {
             }}
         >
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              
                 <div className="font-serif text-2xl md:text-2xl lg:text-3xl font-bold tracking-tight text-pink-500 p-2">
                     Shruti&apos;s Closet
                 </div>
@@ -69,15 +66,15 @@ export default function Navbar() {
                     </form>
                 </div>
                 <div className="ml-4">
-                    { totalQuantity >-1 &&
+                    {totalQuantity > -1 && (
                         <Badge badgeContent={totalQuantity} color="primary">
                             <Button onClick={() => setViewCart(!viewCart)}>
                                 <ShoppingCartIcon className="text-pink-500" />
                             </Button>
                         </Badge>
-                }
+                    )}
                 </div>
-                
+
                 <SignedOut>
                     <Link href={"/auth/sign-in"}>
                         <Button>
