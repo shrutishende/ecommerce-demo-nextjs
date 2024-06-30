@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { useEffect } from "react";
 
 export interface CartItems {
     id: number;
@@ -14,7 +15,8 @@ export interface CartState {
 }
 
 export const initialState: CartState = {
-    items: JSON.parse(localStorage.getItem("cartItems") || "[]"),
+    //items: JSON.parse(localStorage.getItem("cartItems") || "[]"),
+    items: [],
     totalPrice: 0,
 };
 
@@ -22,6 +24,15 @@ export const cartSlice = createSlice({
     name: "cart",
     initialState,
     reducers: {
+        initializeCart: (state) => {
+            if (typeof window !== "undefined") {
+                const storedCartItems = JSON.parse(
+                    localStorage.getItem("cartItems") || "[]"
+                );
+                state.items = storedCartItems;
+            }
+        },
+
         addToCart: (state, action: PayloadAction<CartItems>) => {
             const existingItemIndex = state.items.findIndex(
                 (item) => item.id === action.payload.id
@@ -36,8 +47,9 @@ export const cartSlice = createSlice({
                 state.items.push(action.payload);
             }
 
+            if (typeof window !== "undefined") {
                 localStorage.setItem("cartItems", JSON.stringify(state.items));
-            
+            }
         },
 
         removeFromCart: (state, action: PayloadAction<CartItems>) => {
@@ -48,8 +60,9 @@ export const cartSlice = createSlice({
                 state.items.splice(existingItemIndex, 1);
             }
 
+            if (typeof window !== "undefined") {
                 localStorage.setItem("cartItems", JSON.stringify(state.items));
-            
+            }
         },
 
         increaseCount: (state, action) => {
@@ -58,8 +71,9 @@ export const cartSlice = createSlice({
                 item.quantity++;
             }
 
+            if (typeof window !== "undefined") {
                 localStorage.setItem("cartItems", JSON.stringify(state.items));
-            
+            }
         },
         decreaseCount: (state, action) => {
             const item = state.items.find((item) => item.id === action.payload);
@@ -67,8 +81,10 @@ export const cartSlice = createSlice({
                 // Ensure quantity doesn't go below 1
                 item.quantity--;
             }
+
+            if (typeof window !== "undefined") {
                 localStorage.setItem("cartItems", JSON.stringify(state.items));
-            
+            }
         },
 
         calculateTotalPrice: (state) => {
@@ -85,6 +101,7 @@ export const {
     increaseCount,
     decreaseCount,
     calculateTotalPrice,
+    initializeCart,
 } = cartSlice.actions;
 
 export default cartSlice.reducer;
