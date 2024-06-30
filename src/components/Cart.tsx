@@ -10,6 +10,7 @@ import {
     calculateTotalPrice,
     decreaseCount,
     increaseCount,
+    initializeCart,
     removeFromCart,
 } from "../../lib/features/cartSlice";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -20,9 +21,13 @@ export default function Cart() {
     const totalPrice = useAppSelector(
         (state: RootState) => state.cart.totalPrice
     );
+    
 
     const dispatch = useDispatch();
-
+    useEffect(() => {
+        dispatch(initializeCart());
+    }, [dispatch]);
+   
     useEffect(() => {
         dispatch(calculateTotalPrice());
     }, [cartItems, dispatch]);
